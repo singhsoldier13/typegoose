@@ -11,10 +11,13 @@ export type Func = (...args: any[]) => any;
 export type RequiredType = boolean | [boolean, string] | string | Func | [Func, string];
 
 export type ValidatorFunction = (value: any) => boolean | Promise<boolean>;
-export type Validator = ValidatorFunction | RegExp | {
-    validator: ValidatorFunction,
-    message?: string,
-};
+export type Validator =
+  | ValidatorFunction
+  | RegExp
+  | {
+      validator: ValidatorFunction;
+      message?: string;
+    };
 
 export interface BasePropOptions {
   required?: RequiredType;
@@ -48,10 +51,9 @@ export type PropOptionsWithStringValidate = PropOptions & ValidateStringOptions;
 export type PropOptionsWithValidate = PropOptionsWithNumberValidate | PropOptionsWithStringValidate;
 
 const isWithStringValidate = (options: PropOptionsWithStringValidate) =>
-  (options.minlength || options.maxlength || options.match);
+  options.minlength || options.maxlength || options.match;
 
-const isWithNumberValidate = (options: PropOptionsWithNumberValidate) =>
-  (options.min || options.max);
+const isWithNumberValidate = (options: PropOptionsWithNumberValidate) => options.min || options.max;
 
 const baseProp = (rawOptions, Type, target, key, isArray = false) => {
   const name = target.constructor.name;
@@ -100,12 +102,12 @@ const baseProp = (rawOptions, Type, target, key, isArray = false) => {
     };
     return;
   } else if (ref) {
-     schema[name][key] = {
+    schema[name][key] = {
       ...schema[name][key],
       type: mongoose.Schema.Types.ObjectId,
       ref: ref.name,
     };
-     return;
+    return;
   }
 
   const itemsRef = rawOptions.itemsRef;
@@ -121,7 +123,7 @@ const baseProp = (rawOptions, Type, target, key, isArray = false) => {
   const enumOption = rawOptions.enum;
   if (enumOption) {
     if (!Array.isArray(enumOption)) {
-      rawOptions.enum = Object.keys(enumOption).map((propKey) => enumOption[propKey]);
+      rawOptions.enum = Object.keys(enumOption).map(propKey => enumOption[propKey]);
     }
   }
 

@@ -3,9 +3,9 @@ import * as mongoose from 'mongoose';
 
 import { schema, constructors } from './data';
 
-export const isPrimitive = (Type) => _.includes(['String', 'Number', 'Boolean', 'Date', 'Decimal128'], Type.name);
+export const isPrimitive = Type => _.includes(['String', 'Number', 'Boolean', 'Date', 'Decimal128'], Type.name);
 
-export const isObject = (Type) => {
+export const isObject = Type => {
   let prototype = Type.prototype;
   let name = Type.name;
   while (name) {
@@ -19,9 +19,9 @@ export const isObject = (Type) => {
   return false;
 };
 
-export const isNumber = (Type) => Type.name === 'Number';
+export const isNumber = Type => Type.name === 'Number';
 
-export const isString = (Type) => Type.name === 'String';
+export const isString = Type => Type.name === 'String';
 
 export const initAsObject = (name, key) => {
   if (!schema[name]) {

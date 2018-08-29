@@ -1,6 +1,6 @@
 {
-  "name": "typegoose",
-  "version": "5.3.0",
+  "name": "typegoose-es5",
+  "version": "1.0.0",
   "description": "Define Mongoose models using TypeScript classes.",
   "main": "lib/typegoose.js",
   "scripts": {
@@ -10,15 +10,21 @@
     "test": "npm run lint && npm run cover",
     "mocha": "npm run build && mocha ./lib --recursive --exit",
     "cover": "npm run build && istanbul cover _mocha -- lib --recursive --exit -R spec",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "prepare": "npm run start",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/szokodiakos/typegoose.git"
+    "url": "https://github.com/singhsoldier13/typegoose.git"
   },
   "types": "lib/typegoose.d.ts",
   "typings": "lib/typegoose.d.ts",
-  "author": "Akos Szokodi <akos@codingsans.com> (http://codingsans.com)",
+  "author": "Varinder Singh",
   "license": "MIT",
   "dependencies": {
     "lodash": "4.17.10"
@@ -40,8 +46,10 @@
     "istanbul": "0.4.5",
     "mocha": "^5.2.0",
     "mongoose-findorcreate": "3.0.0",
+    "prettier": "^1.14.2",
     "rimraf": "2.6.2",
     "tslint": "5.9.1",
+    "tslint-config-prettier": "^1.15.0",
     "typescript": "^2.9.2"
   }
 }

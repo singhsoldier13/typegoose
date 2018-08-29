@@ -5,4 +5,4 @@ export const virtuals = {};
 export const hooks = {};
 export const plugins = {};
 // tslint:disable-next-line:ban-types
-export const constructors: {[key: string]: Function} = {};
+export const constructors: { [key: string]: Function } = {};

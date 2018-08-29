@@ -63,9 +63,7 @@ export class Typegoose {
     const Schema = mongoose.Schema;
 
     if (!sch) {
-      sch = schemaOptions ?
-        new Schema(schema[name], schemaOptions) :
-        new Schema(schema[name]);
+      sch = schemaOptions ? new Schema(schema[name], schemaOptions) : new Schema(schema[name]);
     } else {
       sch.add(schema[name]);
     }
@@ -86,17 +84,17 @@ export class Typegoose {
 
     if (hooks[name]) {
       const preHooks = hooks[name].pre;
-      preHooks.forEach((preHookArgs) => {
+      preHooks.forEach(preHookArgs => {
         (sch as any).pre(...preHookArgs);
       });
       const postHooks = hooks[name].post;
-      postHooks.forEach((postHookArgs) => {
+      postHooks.forEach(postHookArgs => {
         (sch as any).post(...postHookArgs);
       });
     }
 
     if (plugins[name]) {
-      _.forEach(plugins[name], (plugin) => {
+      _.forEach(plugins[name], plugin => {
         sch.plugin(plugin.mongoosePlugin, plugin.options);
       });
     }
