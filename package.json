@@ -1,5 +1,5 @@
 {
-  "name": "typegoose",
+  "name": "typegoose-es5",
   "version": "5.5.1",
   "description": "Define Mongoose models using TypeScript classes.",
   "main": "lib/typegoose.js",
@@ -17,11 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/szokodiakos/typegoose.git"
+    "url": "https://github.com/singhsoldier13/typegoose.git"
   },
   "types": "lib/typegoose.d.ts",
   "typings": "lib/typegoose.d.ts",
-  "author": "Akos Szokodi <akos@codingsans.com> (http://codingsans.com)",
+  "author": "Varinder Singh",
   "license": "MIT",
   "peerDependencies": {
     "mongoose": "^5.4.15"
