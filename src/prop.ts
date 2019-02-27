@@ -1,7 +1,8 @@
-import * as mongoose from 'mongoose';
-import * as _ from 'lodash';
+/** @format */
 
-import { schema, virtuals } from './data';
+import * as mongoose from 'mongoose';
+
+import { schema, virtuals, methods } from './data';
 import { isPrimitive, initAsObject, initAsArray, isString, isNumber, isObject } from './utils';
 import { InvalidPropError, NotNumberTypeError, NotStringTypeError, NoMetadataError } from './errors';
 import { ObjectID } from 'bson';
@@ -46,17 +47,26 @@ export interface ValidateStringOptions {
   match?: RegExp | [RegExp, string];
 }
 
+export interface TransformStringOptions {
+  lowercase?: boolean; // whether to always call .toLowerCase() on the value
+  uppercase?: boolean; // whether to always call .toUpperCase() on the value
+  trim?: boolean; // whether to always call .trim() on the value
+}
+
 export type PropOptionsWithNumberValidate = PropOptions & ValidateNumberOptions;
-export type PropOptionsWithStringValidate = PropOptions & ValidateStringOptions;
+export type PropOptionsWithStringValidate = PropOptions & TransformStringOptions & ValidateStringOptions;
 export type PropOptionsWithValidate = PropOptionsWithNumberValidate | PropOptionsWithStringValidate;
 
 const isWithStringValidate = (options: PropOptionsWithStringValidate) =>
   options.minlength || options.maxlength || options.match;
 
+const isWithStringTransform = (options: PropOptionsWithStringValidate) =>
+  options.lowercase || options.uppercase || options.trim;
+
 const isWithNumberValidate = (options: PropOptionsWithNumberValidate) => options.min || options.max;
 
-const baseProp = (rawOptions, Type, target, key, isArray = false) => {
-  const name = target.constructor.name;
+const baseProp = (rawOptions: any, Type: any, target: any, key: any, isArray = false) => {
+  const name: string = target.constructor.name;
   const isGetterSetter = Object.getOwnPropertyDescriptor(target, key);
   if (isGetterSetter) {
     if (isGetterSetter.get) {
@@ -136,19 +146,24 @@ const baseProp = (rawOptions, Type, target, key, isArray = false) => {
     throw new NotNumberTypeError(key);
   }
 
+  // check for transform inconsistencies
+  if (isWithStringTransform(rawOptions) && !isString(Type)) {
+    throw new NotStringTypeError(key);
+  }
+
   const instance = new Type();
   const subSchema = schema[instance.constructor.name];
   if (!subSchema && !isPrimitive(Type) && !isObject(Type)) {
     throw new InvalidPropError(Type.name, key);
   }
 
-  const options = _.omit(rawOptions, ['ref', 'items']);
+  const { ['ref']: r, ['items']: i, ...options } = rawOptions;
   if (isPrimitive(Type)) {
     if (isArray) {
-      schema[name][key][0] = {
+      schema[name][key] = {
         ...schema[name][key][0],
         ...options,
-        type: Type,
+        type: [Type],
       };
       return;
     }
@@ -183,10 +198,17 @@ const baseProp = (rawOptions, Type, target, key, isArray = false) => {
   const Schema = mongoose.Schema;
 
   const supressSubschemaId = rawOptions._id === false;
+  const virtualSchema = new Schema({ ...subSchema }, supressSubschemaId ? { _id: false } : {});
+
+  const schemaInstanceMethods = methods.instanceMethods[instance.constructor.name];
+  if (schemaInstanceMethods) {
+    virtualSchema.methods = schemaInstanceMethods;
+  }
+
   schema[name][key] = {
     ...schema[name][key],
     ...options,
-    type: new Schema({ ...subSchema }, supressSubschemaId ? { _id: false } : {}),
+    type: virtualSchema,
   };
   return;
 };

@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": ["esnext"],
     "module": "commonjs",
     "declaration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowJs": false,
     "outDir": "lib",
-    "sourceMap": true,
-    "lib": ["ES6"]
+    "inlineSourceMap": true
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }
